@@ -78,12 +78,12 @@ extension AVAsset {
   
   func localDisplayName(forMediaSelectionOption subtitle: AVMediaSelectionOption) -> String?{
     var title: String? = nil
-    var metadataItems = AVMetadataItem.metadataItems(from: subtitle.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: AVMetadataKeySpace.common)
+    let metadataItems = AVMetadataItem.metadataItems(from: subtitle.commonMetadata, withKey: AVMetadataKey.commonKeyTitle, keySpace: AVMetadataKeySpace.common)
     if metadataItems.count > 0 {
       let preferredLanguages = NSLocale.preferredLanguages
       for language: String in preferredLanguages {
         let locale = Locale(identifier: language)
-        var titlesForLocale = AVMetadataItem.metadataItems(from: metadataItems, with: locale)
+        let titlesForLocale = AVMetadataItem.metadataItems(from: metadataItems, with: locale)
         if titlesForLocale.count > 0 {
           title = titlesForLocale[0].stringValue
           break
