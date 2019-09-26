@@ -19,6 +19,17 @@ public class AnimateTransitioning: NSObject {
   /// 内部持有延长其生命期
   private static var shared: AnimateTransitioning?
   
+  public enum AnimationType {
+    case bottomToTop
+    case topToBottom
+    case rightToLeft
+    case leftToRight
+  }
+  /// 指定显示时动画
+  public var presentAnimationType: AnimationType = .bottomToTop
+  /// 指定消失时动画
+  public var dismissAnimationType: AnimationType = .topToBottom
+  
   /// 用于描述当前动画处于哪一步
   private enum Step {
     /// 模态动画的present阶段
@@ -105,8 +116,8 @@ extension AnimateTransitioning: UIViewControllerAnimatedTransitioning {
     containerView = transitionContext.containerView
     
     switch step {
-    case .present: animatePresentTransition(using: transitionContext)
-    case .dismis: animateDismisTransition(using: transitionContext)
+    case .present: animatePresentTransition(using: transitionContext, animationType: presentAnimationType)
+    case .dismis: animateDismisTransition(using: transitionContext, animationType: dismissAnimationType)
     default: break
     }
   }
@@ -130,7 +141,7 @@ private extension AnimateTransitioning {
 // MARK: - Utility
 private extension AnimateTransitioning {
   
-  func animatePresentTransition(using transitionContext: UIViewControllerContextTransitioning) {
+  func animatePresentTransition(using transitionContext: UIViewControllerContextTransitioning, animationType: AnimationType) {
     
     guard let toViewController = toViewController else { return }
     guard let containerView = containerView else { return }
@@ -138,7 +149,13 @@ private extension AnimateTransitioning {
     containerView.backgroundColor = maskColor
     
     containerView.addSubview(toViewController.view)
-    toViewController.view.frame.origin.y = UIScreen.main.bounds.height
+    switch animationType {
+    case .bottomToTop: toViewController.view.frame.origin.y = UIScreen.main.bounds.height
+    case .topToBottom: toViewController.view.frame.origin.y = -UIScreen.main.bounds.height
+    case .rightToLeft: toViewController.view.frame.origin.x = UIScreen.main.bounds.width
+    case .leftToRight: toViewController.view.frame.origin.x = -UIScreen.main.bounds.width
+    }
+//    toViewController.view.frame.origin.y = UIScreen.main.bounds.height
     
     if isTouchMaskHide == true {
       
@@ -147,7 +164,13 @@ private extension AnimateTransitioning {
     
     UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: {
       
-      toViewController.view.frame.origin.y = 0
+//      toViewController.view.frame.origin.y = 0
+      switch animationType {
+      case .bottomToTop, .topToBottom:
+        toViewController.view.frame.origin.y = 0
+      case .rightToLeft, .leftToRight:
+        toViewController.view.frame.origin.x = 0
+      }
       
     }, completion: { (_) in
       
@@ -155,7 +178,7 @@ private extension AnimateTransitioning {
     })
   }
   
-  func animateDismisTransition(using transitionContext: UIViewControllerContextTransitioning) {
+  func animateDismisTransition(using transitionContext: UIViewControllerContextTransitioning, animationType: AnimationType) {
     
     guard let fromViewController = fromViewController else { return }
     guard let toViewController = toViewController else { return }
@@ -167,7 +190,13 @@ private extension AnimateTransitioning {
     
     UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: {
       
-      fromViewController.view.frame.origin.y = UIScreen.main.bounds.height
+      switch animationType {
+      case .bottomToTop: fromViewController.view.frame.origin.y = -UIScreen.main.bounds.height
+      case .topToBottom: fromViewController.view.frame.origin.y = UIScreen.main.bounds.height
+      case .rightToLeft: fromViewController.view.frame.origin.x = -UIScreen.main.bounds.width
+      case .leftToRight: fromViewController.view.frame.origin.x = UIScreen.main.bounds.width
+      }
+//      fromViewController.view.frame.origin.y = UIScreen.main.bounds.height
       
     }, completion: { (_) in
       
