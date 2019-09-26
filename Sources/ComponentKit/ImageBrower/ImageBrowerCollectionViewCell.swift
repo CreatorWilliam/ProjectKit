@@ -7,8 +7,8 @@
 //
 
 import ApplicationKit
-import ImageKit
 import Photos
+import ImageKit
 import UIKit
 
 class ImageBrowerCollectionViewCell: UICollectionViewCell {
@@ -140,7 +140,7 @@ private extension ImageBrowerCollectionViewCell {
   
   @objc func tapSingle(_ sender: UITapGestureRecognizer) {
    
-    Presenter.currentPresentedController?.dismiss(animated: false)
+    Presenter.dismiss()
   }
   
   @objc func longPress(_ sender: UILongPressGestureRecognizer) {
