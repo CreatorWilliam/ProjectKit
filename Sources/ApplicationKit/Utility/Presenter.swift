@@ -44,9 +44,12 @@ public extension Presenter {
   ///   - presentedViewController: 要显示的控制器
   ///   - animated: 是否有动画，默认有动画
   ///   - completion: 完成展示后执行的闭包
-  static func present(_ presentedViewController: UIViewController, style: UIModalPresentationStyle = .fullScreen, animated: Bool = true, completion: (() -> Void)? = nil) {
+  static func present(_ presentedViewController: UIViewController, style: UIModalPresentationStyle? = nil, animated: Bool = true, completion: (() -> Void)? = nil) {
     
-    presentedViewController.modalPresentationStyle = style
+    if let style = style {
+      
+      presentedViewController.modalPresentationStyle = style
+    }
     Presenter.currentPresentedController?.present(presentedViewController, animated: animated, completion: completion)
   }
   
