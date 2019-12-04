@@ -4,34 +4,34 @@
 import PackageDescription
 
 let package = Package(
-    name: "ProjectKit",
-    products: [
-        // Products define the executables and libraries produced by a package, and make them visible to other packages.
-        .library(
-            name: "ProjectKit",
-            type: .dynamic,
-            targets: ["ApplicationKit",
-                      "ComponentKit"]),
-    ],
-    dependencies: [
-        // Dependencies declare other packages that this package depends on.
-      .package(url: "https://github.com/CreatorWilliam/JSONKit.git", .branch("master")),
-      .package(url: "https://github.com/CreatorWilliam/LayoutKit.git", .branch("master")),
-      .package(url: "https://github.com/CreatorWilliam/NetworkKit.git", .branch("master")),
-      .package(url: "https://github.com/CreatorWilliam/ImageKit.git", .branch("master"))
-    ],
-    targets: [
-        // Targets are the basic building blocks of a package. A target can define a module or a test suite.
-        // Targets can depend on other targets in this package, and on products in packages which this package depends on.
-        .target(
-            name: "ApplicationKit",
-            dependencies: ["LayoutKit",
-                           "JSONKit",
-                           "NetworkKit"]),
-        .target(name: "ComponentKit",
-                dependencies: ["ApplicationKit", "ImageKit"]),
-        .testTarget(
-            name: "ApplicationKitTests",
-            dependencies: ["ApplicationKit"]),
-    ]
+  name: "ProjectKit",
+  products: [
+    // Products define the executables and libraries produced by a package, and make them visible to other packages.
+    .library(
+      name: "ProjectKit",
+      type: .static,
+      targets: ["ApplicationKit",
+                "ComponentKit"]),
+  ],
+  dependencies: [
+    // Dependencies declare other packages that this package depends on.
+    .package(url: "https://github.com/CreatorWilliam/JSONKit.git", .branch("master")),
+    .package(url: "https://github.com/CreatorWilliam/LayoutKit.git", .branch("master")),
+    .package(url: "https://github.com/CreatorWilliam/NetworkKit.git", .branch("master")),
+    .package(url: "https://github.com/CreatorWilliam/ImageKit.git", .branch("master"))
+  ],
+  targets: [
+    // Targets are the basic building blocks of a package. A target can define a module or a test suite.
+    // Targets can depend on other targets in this package, and on products in packages which this package depends on.
+    .target(
+      name: "ApplicationKit",
+      dependencies: ["LayoutKit",
+                     "JSONKit",
+                     "NetworkKit"]),
+    .target(name: "ComponentKit",
+            dependencies: ["ApplicationKit", "ImageKit"]),
+    .testTarget(
+      name: "ApplicationKitTests",
+      dependencies: ["ApplicationKit"]),
+  ]
 )
