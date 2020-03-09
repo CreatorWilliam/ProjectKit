@@ -174,6 +174,12 @@ private extension Presenter {
       presentedViewController = presentedViewController?.presentedViewController
     }
     
+    if let splitViewController = presentedViewController as? UISplitViewController {
+      
+      return self.queryPresentedViewController(from: splitViewController.viewControllers.last)
+      
+    }
+    
     /// 2、如果是UITabBarController，则使用当前选中的控制器进一步递归查找
     if let tabbarController = presentedViewController as? UITabBarController {
       
