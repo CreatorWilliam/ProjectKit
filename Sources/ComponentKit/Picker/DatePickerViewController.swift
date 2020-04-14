@@ -49,6 +49,7 @@ public class DatePickerViewController: UIViewController {
   private let systemDatePickerView = UIDatePicker()
   
   private var sortedCalendarComponents: [Calendar.Component] = []
+  /// 表示当前PiickerView选中日期的日期组件
   private lazy var dateComponents = Calendar.current.dateComponents(Set(sortedCalendarComponents), from: date)
   
   public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -92,7 +93,7 @@ public class DatePickerViewController: UIViewController {
     
     setupUI()
     
-    set(date, animated: false)
+    setPickerView(date, animated: false)
   }
   
 }
@@ -261,17 +262,20 @@ private extension DatePickerViewController {
 // MARK: - Utiltiy
 private extension DatePickerViewController {
   
+  /// 根据日期生成日期组件
   func dateComponents(from date: Date) -> DateComponents {
     
     return Calendar.current.dateComponents(Set(sortedCalendarComponents), from: date)
   }
   
+  /// 根据日期组件生成日期
   func date(from dateComponents: DateComponents) -> Date? {
     
     return Calendar.current.date(from: dateComponents)
   }
   
-  func set(_ date: Date, animated: Bool) {
+  /// 设置DatePickerView选中的日期
+  func setPickerView(_ date: Date, animated: Bool) {
     
     /// Date与DateComponents进行同步
     dateComponents = dateComponents(from: date)
@@ -280,9 +284,9 @@ private extension DatePickerViewController {
     customizeDatePickerView.reloadAllComponents()
     
     /// 自定义选择视图选中对应日期时间的行
-    sortedCalendarComponents.enumerated().forEach({ (index, mode) in
+    sortedCalendarComponents.enumerated().forEach({ (index, component) in
       
-      switch mode {
+      switch component {
       case .year: customizeDatePickerView.selectRow((dateComponents.year ?? 1) - 1, inComponent: index, animated: animated)
       case .month: customizeDatePickerView.selectRow((dateComponents.month ?? 1) - 1, inComponent: index, animated: animated)
       case .day: customizeDatePickerView.selectRow((dateComponents.day ?? 1) - 1, inComponent: index, animated: animated)
@@ -293,16 +297,15 @@ private extension DatePickerViewController {
       }
     })
     
-    systemDatePickerView.date = self.date
+    systemDatePickerView.setDate(self.date, animated: animated)
   }
   
-  var dayCount: Int {
+  /// 根据日期组件获取月份的天数
+  func dayCountOfMonth(with dateComponents: DateComponents) -> Int {
     
-    var dateComponents = Calendar.current.dateComponents(Set(sortedCalendarComponents), from: Date())
-    dateComponents.year = self.dateComponents.year
-    dateComponents.month = self.dateComponents.month
-    
-    guard let date = Calendar.current.date(from: dateComponents) else { return 0 }
+    var noDayDateComponents = dateComponents
+    noDayDateComponents.day = nil
+    guard let date = Calendar.current.date(from: noDayDateComponents) else { return 0 }
     return Calendar.current.range(of: .day, in: .month, for: date)?.count ?? 0
   }
   
@@ -325,22 +328,21 @@ extension DatePickerViewController: UIPickerViewDelegate {
   
   public func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
     
-    let mode = sortedCalendarComponents[component]
+    let component = sortedCalendarComponents[component]
     
-    switch mode {
+    switch component {
     case .year: dateComponents.year = row + 1
-      
     case .month: dateComponents.month = row + 1
-      
     case .day: dateComponents.day = row + 1
-      
     case .hour: dateComponents.hour = row
-      
     case .minute: dateComponents.minute = row
-      
     case .second: dateComponents.second = row
-      
     default: break
+    }
+    
+    /// 避免选中“天”的索引超过选中月份的总天数，导致实际日期会跳入下一个月
+    if (dateComponents.day ?? 0) > dayCountOfMonth(with: dateComponents) {
+      dateComponents.day = dayCountOfMonth(with: dateComponents)
     }
     
     /// 保存选中的日期时间
@@ -349,27 +351,27 @@ extension DatePickerViewController: UIPickerViewDelegate {
     /// 如果选中的日期比设置的可选的最小日期小，则自动滑动到最小日期
     if let minimumDate = minimumDate, date < minimumDate {
       
-      set(minimumDate, animated: true)
+      setPickerView(minimumDate, animated: true)
       return
     }
     
     /// 如果选中的日期比设置的可选的最大日期大，则自动滑动到最大日期
     if let maximumDate = maximumDate, date > maximumDate {
       
-      set(maximumDate, animated: true)
+      setPickerView(maximumDate, animated: true)
       return
     }
     
-    set(date, animated: true)
+    setPickerView(date, animated: true)
   }
   
   public func pickerView(_ pickerView: UIPickerView, attributedTitleForRow row: Int, forComponent component: Int) -> NSAttributedString? {
     
-    let mode = sortedCalendarComponents[component]
+    let component = sortedCalendarComponents[component]
     var dateComponents = self.dateComponents
     
     let text: String
-    switch mode {
+    switch component {
     case .year:
       
       text = String(format: "%04d年", row + 1)
@@ -381,8 +383,18 @@ extension DatePickerViewController: UIPickerViewDelegate {
       
     case .day:
       
-      text = String(format: "%02d日", row + 1)
       dateComponents.day = row + 1
+      let todayComponent = self.dateComponents(from: Date())
+      if todayComponent.year == dateComponents.year &&
+        todayComponent.month == dateComponents.month &&
+        todayComponent.day == dateComponents.day {
+      
+        text = "今日"
+        
+      } else {
+        
+        text = String(format: "%02d日", row + 1)
+      }
       
     case .hour:
       
@@ -434,12 +446,12 @@ extension DatePickerViewController: UIPickerViewDataSource {
   
   public func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
     
-    let mode = sortedCalendarComponents[component]
+    let component = sortedCalendarComponents[component]
     
-    switch mode {
+    switch component {
     case .year: return 10000
     case .month: return 12
-    case .day: return dayCount
+    case .day: return dayCountOfMonth(with: dateComponents)
     case .hour: return 24
     case .minute: return 60
     case .second: return 60
