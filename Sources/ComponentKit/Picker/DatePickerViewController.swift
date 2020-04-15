@@ -55,8 +55,7 @@ public class DatePickerViewController: UIViewController {
   public override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
     super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     
-    let delegate = AnimateTransitioning()
-    delegate.isTouchMaskHide = false
+    let delegate = Transitioning()
     transitioningDelegate = delegate
     modalPresentationStyle = .custom
     

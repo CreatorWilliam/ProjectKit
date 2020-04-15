@@ -1,5 +1,5 @@
 //
-//  AnimateTransitioning.swift
+//  Transitioning.swift
 //  ComponentKit
 //
 //  Created by William Lee on 2019/8/5.
@@ -9,29 +9,31 @@
 import ApplicationKit
 import UIKit
 
-public class AnimateTransitioning: NSObject {
+/// 表示UIViewController转场动画
+public class Transitioning: NSObject {
   
   /// 蒙版颜色
   public var maskColor: UIColor = UIColor.black.withAlphaComponent(0.4)
-  /// 是否点击蒙版关闭
-  public var isTouchMaskHide: Bool = true
+  /// 是否开启退出手势
+  public var isQuitGestureEnable: Bool = true
   
   /// 内部持有延长其生命期
-  private static var shared: AnimateTransitioning?
+  private static var shared: Transitioning?
   
-  public enum AnimationType {
+  /// 转场动画
+  public enum Animation {
     case bottomToTop
     case topToBottom
     case rightToLeft
     case leftToRight
   }
-  /// 指定显示时动画
-  public var presentAnimationType: AnimationType = .bottomToTop
-  /// 指定消失时动画
-  public var dismissAnimationType: AnimationType = .topToBottom
+  /// 设置Present转场动画
+  public var presentAnimation: Animation = .bottomToTop
+  /// 设置Dismiss转场动画
+  public var dismissAnimation: Animation = .topToBottom
   
-  /// 用于描述当前动画处于哪一步
-  private enum Step {
+  /// 用于描述转场阶段
+  private enum Stage {
     /// 模态动画的present阶段
     case present
     /// 模态动画的dismiss阶段
@@ -42,45 +44,49 @@ public class AnimateTransitioning: NSObject {
     case pop
   }
   
+  /// 过渡容器视图
   private weak var containerView: UIView?
+  /// 转场开始时显示的控制器
   private weak var fromViewController: UIViewController?
+  /// 转场结束后显示的控制器
   private weak var toViewController: UIViewController?
   
   /// 保存当前动画所处的阶段
-  private var step: Step = .present
-  /// 用于点击背景退出
-  private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapDismiss))
+  private var stage: Stage = .present
+  /// 滑动退出手势
+  private lazy var quitGesture = UISwipeGestureRecognizer(target: self,
+                                                          action: #selector(quit(_:)))
   
   public override init() {
     super.init()
     
-    AnimateTransitioning.shared = self
+    Transitioning.shared = self
   }
   
 }
 
 // MARK: - Public
-extension AnimateTransitioning {
+extension Transitioning {
   
 }
 
 // MARK: - UINavigationControllerDelegate
-extension AnimateTransitioning: UINavigationControllerDelegate {
+extension Transitioning: UINavigationControllerDelegate {
   
 }
 
 // MARK: - UIViewControllerTransitioningDelegate
-extension AnimateTransitioning: UIViewControllerTransitioningDelegate {
+extension Transitioning: UIViewControllerTransitioningDelegate {
   
   public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
     
-    step = .present
+    stage = .present
     return self
   }
   
   public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
     
-    step = .dismis
+    stage = .dismis
     return self
   }
   
@@ -102,7 +108,7 @@ extension AnimateTransitioning: UIViewControllerTransitioningDelegate {
 }
 
 // MARK: - UIViewControllerAnimatedTransitioning
-extension AnimateTransitioning: UIViewControllerAnimatedTransitioning {
+extension Transitioning: UIViewControllerAnimatedTransitioning {
   
   public func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval {
     
@@ -115,9 +121,9 @@ extension AnimateTransitioning: UIViewControllerAnimatedTransitioning {
     fromViewController = transitionContext.viewController(forKey: .from)
     containerView = transitionContext.containerView
     
-    switch step {
-    case .present: animatePresentTransition(using: transitionContext, animationType: presentAnimationType)
-    case .dismis: animateDismisTransition(using: transitionContext, animationType: dismissAnimationType)
+    switch stage {
+    case .present: animatePresentTransition(using: transitionContext, animationType: presentAnimation)
+    case .dismis: animateDismisTransition(using: transitionContext, animationType: dismissAnimation)
     default: break
     }
   }
@@ -129,9 +135,11 @@ extension AnimateTransitioning: UIViewControllerAnimatedTransitioning {
 }
 
 // MARK: - Action
-private extension AnimateTransitioning {
+private extension Transitioning {
   
-  @objc func tapDismiss(_ sender: UITapGestureRecognizer) {
+  @objc func quit(_ sender: UISwipeGestureRecognizer) {
+    
+    guard sender.direction == .down else { return }
     
     Presenter.back()
   }
@@ -139,9 +147,9 @@ private extension AnimateTransitioning {
 }
 
 // MARK: - Utility
-private extension AnimateTransitioning {
+private extension Transitioning {
   
-  func animatePresentTransition(using transitionContext: UIViewControllerContextTransitioning, animationType: AnimationType) {
+  func animatePresentTransition(using transitionContext: UIViewControllerContextTransitioning, animationType: Animation) {
     
     guard let toViewController = toViewController else { return }
     guard let containerView = containerView else { return }
@@ -155,16 +163,15 @@ private extension AnimateTransitioning {
     case .rightToLeft: toViewController.view.frame.origin.x = UIScreen.main.bounds.width
     case .leftToRight: toViewController.view.frame.origin.x = -UIScreen.main.bounds.width
     }
-//    toViewController.view.frame.origin.y = UIScreen.main.bounds.height
     
-    if isTouchMaskHide == true {
+    if isQuitGestureEnable == true {
       
-      toViewController.view.addGestureRecognizer(tapGestureRecognizer)
+      quitGesture.direction = .down
+      toViewController.view.addGestureRecognizer(quitGesture)
     }
     
     UIView.animate(withDuration: transitionDuration(using: transitionContext), animations: {
       
-//      toViewController.view.frame.origin.y = 0
       switch animationType {
       case .bottomToTop, .topToBottom:
         toViewController.view.frame.origin.y = 0
@@ -178,13 +185,13 @@ private extension AnimateTransitioning {
     })
   }
   
-  func animateDismisTransition(using transitionContext: UIViewControllerContextTransitioning, animationType: AnimationType) {
+  func animateDismisTransition(using transitionContext: UIViewControllerContextTransitioning, animationType: Animation) {
     
     guard let fromViewController = fromViewController else { return }
     guard let toViewController = toViewController else { return }
     guard let containerView = containerView else { return }
     
-    toViewController.view.removeGestureRecognizer(tapGestureRecognizer)
+    toViewController.view.removeGestureRecognizer(quitGesture)
     
     containerView.addSubview(fromViewController.view)
     
@@ -196,12 +203,11 @@ private extension AnimateTransitioning {
       case .rightToLeft: fromViewController.view.frame.origin.x = -UIScreen.main.bounds.width
       case .leftToRight: fromViewController.view.frame.origin.x = UIScreen.main.bounds.width
       }
-//      fromViewController.view.frame.origin.y = UIScreen.main.bounds.height
       
     }, completion: { (_) in
       
       transitionContext.completeTransition(true)
-      AnimateTransitioning.shared = nil
+      Transitioning.shared = nil
     })
   }
   
