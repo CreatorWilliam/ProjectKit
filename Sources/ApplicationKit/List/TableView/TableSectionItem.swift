@@ -16,20 +16,20 @@ public protocol TableSectionItemUpdatable {
 
 public struct TableSectionItem {
   
+  /// 不重用的View
+  public var view: UIView? { didSet { reuseItem = nil } }
+  /// SectionView重用符号
+  public var reuseItem: ReuseItem? { didSet { view = nil } }
+  /// 高度
+  public var height: CGFloat
+  
   /// 更新SectionView的数据
   public var data: Any?
   /// 辅助用数据
   public var accessoryData: Any?
-  /// 不重用的View
-  internal var view: UIView?
-  
   /// SectionView代理
   public weak var delegate: AnyObject?
   
-  /// SectionView重用符号
-  internal var reuseItem: ReuseItem?
-  /// 高度
-  internal let height: CGFloat
   
   /// 创建动态重用的Section视图
   ///

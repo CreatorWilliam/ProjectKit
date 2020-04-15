@@ -19,8 +19,6 @@ public class TableServer: NSObject {
       tableView.delegate = self
       tableView.dataSource = self
       tableView.separatorInset = UIEdgeInsets(top: 0, left: 0.01, bottom: 0, right: 0.01)
-      tableView.sectionHeaderHeight = 0
-      tableView.sectionFooterHeight = 0
       guard tableView.style == .plain else { return }
       tableView.tableFooterView = UIView()
     }
@@ -49,7 +47,7 @@ public class TableServer: NSObject {
   /// 数据源
   public var groups: [TableSectionGroup] = []
   
-  // MARK: ******************** Public ********************
+  // MARK: ******************** Private ********************
   /// 重用的Cell组
   private var reusedCells: Set<String> = []
   /// 重用的SectionView组
@@ -71,8 +69,6 @@ public class TableServer: NSObject {
     tableView.delegate = self
     tableView.dataSource = self
     tableView.separatorInset = UIEdgeInsets(top: 0, left: 0.01, bottom: 0, right: 0.01)
-    tableView.sectionHeaderHeight = 0
-    tableView.sectionFooterHeight = 0
     guard tableView.style == .plain else { return }
     tableView.tableFooterView = UIView()
   }
@@ -105,14 +101,16 @@ public extension TableServer {
   /// 使用数据源局部更新
   ///
   /// - Parameters:
-  ///   - groups: Sections的数据源
+  ///   - newGroups: 完整的Sections的数据源
   ///   - sections: Sections的索引
   ///   - animation: 动画
-  func update(_ groups: [TableSectionGroup], at sections: IndexSet, with animation: UITableView.RowAnimation = .none) {
+  func update(_ newGroups: [TableSectionGroup],
+              at sections: IndexSet,
+              with animation: UITableView.RowAnimation = .none) {
     
-    sections.forEach({ self.groups[$0] = groups[$0] })
+    sections.forEach({ groups[$0] = newGroups[$0] })
 
-    registerNewViews(with: groups)
+    registerNewViews(with: newGroups)
     
     tableView.reloadSections(sections, with: animation)
     
@@ -218,38 +216,23 @@ extension TableServer: UITableViewDelegate {
   // Estimated Height Cell
   public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
     
-    var estimatedHeight: CGFloat = UITableView.automaticDimension
-    
-    if let height = cachedRowHeights[indexPath], height > 1 {
+    if groups[indexPath.section].items[indexPath.row].height != UITableView.automaticDimension {
       
-      estimatedHeight = height
-      
-    } else if groups[indexPath.section].items[indexPath.row].height > 1 {
-      
-      estimatedHeight = groups[indexPath.section].items[indexPath.row].height
-      
-    } else {
-      
-      estimatedHeight = tableView.estimatedRowHeight
+      return groups[indexPath.section].items[indexPath.row].height
     }
     
-    return estimatedHeight
+    return cachedRowHeights[indexPath] ?? tableView.estimatedRowHeight
   }
   
   // Height Cell
   public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
     
-    var height = UITableView.automaticDimension
-    
-    if tableView.rowHeight > 0 {
+    if groups[indexPath.section].items[indexPath.row].height != UITableView.automaticDimension {
       
-      height = tableView.rowHeight
-      
-    } else {
-      
-      height = groups[indexPath.section].items[indexPath.row].height
+      return groups[indexPath.section].items[indexPath.row].height
     }
-    return height
+    
+    return  tableView.rowHeight
   }
   
   // Editable Cell
@@ -272,8 +255,16 @@ extension TableServer: UITableViewDelegate {
     if editingStyle == .delete {
       
       groups[indexPath.section].items[indexPath.row].deleteHandle?()
-      groups[indexPath.section].items.remove(at: indexPath.row)
-      tableView.deleteRows(at: [indexPath], with: .fade)
+      if groups[indexPath.section].items.count < 2 {
+        
+        groups.remove(at: indexPath.section)
+        tableView.deleteSections(IndexSet(integer: indexPath.section), with: .fade)
+        
+      } else {
+        
+        groups[indexPath.section].items.remove(at: indexPath.row)
+        tableView.deleteRows(at: [indexPath], with: .fade)
+      }
       cachedRowHeights[indexPath] = nil
     }
   }
@@ -283,28 +274,22 @@ extension TableServer: UITableViewDelegate {
   // Estimated Height Of Header
   public func tableView(_ tableView: UITableView, estimatedHeightForHeaderInSection section: Int) -> CGFloat {
     
-    var estimatedHeight = UITableView.automaticDimension
-    if let height = cachedHeaderHeights[section], height > 1 {
+    if groups[section].header.height != UITableView.automaticDimension {
       
-      estimatedHeight = height
-      
-    } else if groups[section].header.height > 1 {
-      
-      estimatedHeight = groups[section].header.height
-      
-    } else {
-      
-      estimatedHeight = tableView.estimatedSectionHeaderHeight
+      return groups[section].header.height
     }
-    // 必须保证返回值不在(0, 1]区间内
-    return estimatedHeight
+    return cachedHeaderHeights[section] ?? tableView.estimatedSectionHeaderHeight
   }
   
   // Height Of Header
   public func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
     
-    if tableView.sectionHeaderHeight > 0 { return tableView.sectionHeaderHeight }
-    return groups[section].header.height
+    if groups[section].header.height != UITableView.automaticDimension {
+      
+      return groups[section].header.height
+    }
+    
+    return tableView.sectionHeaderHeight
   }
   
   // View Of Section Header
@@ -338,31 +323,22 @@ extension TableServer: UITableViewDelegate {
   // Estimated Height Of Footer
     public func tableView(_ tableView: UITableView, estimatedHeightForFooterInSection section: Int) -> CGFloat {
       
-      var estimatedHeight = UITableView.automaticDimension
-      if let height = cachedFooterHeights[section], height > 1 {
+      if groups[section].footer.height != UITableView.automaticDimension {
         
-        estimatedHeight = height
-        
-      } else if groups[section].footer.height > 1 {
-        
-        estimatedHeight = groups[section].footer.height
-        
-      } else {
-        
-        estimatedHeight = tableView.estimatedSectionFooterHeight
+        return groups[section].footer.height
       }
-      // 必须保证返回值不在(0, 1]区间内
-      return estimatedHeight
+      return cachedFooterHeights[section] ?? tableView.estimatedSectionFooterHeight
     }
   
   // Height Of Footer
   public func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
     
-    if tableView.sectionFooterHeight > 0 {
+    if groups[section].footer.height != UITableView.automaticDimension {
       
-      return tableView.sectionFooterHeight
+      return groups[section].footer.height
     }
-    return groups[section].footer.height
+    
+    return tableView.sectionFooterHeight
   }
   
   // View Of Section Footer
