@@ -12,6 +12,9 @@ import JSONKit
 
 open class API {
   
+  /// 快速获取空参数
+  public static var parameters: [String: Any] { return [:] }
+  
   /// 接口主机地址
   public static var host: String = ""
   
