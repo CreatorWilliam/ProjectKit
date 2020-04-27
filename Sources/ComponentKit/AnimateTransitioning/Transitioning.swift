@@ -18,7 +18,7 @@ public class Transitioning: NSObject {
   public var isQuitGestureEnable: Bool = true
   
   /// 内部持有延长其生命期
-  private static var shared: Transitioning?
+  private var holder: Transitioning?
   
   /// 转场动画
   public enum Animation {
@@ -60,7 +60,7 @@ public class Transitioning: NSObject {
   public override init() {
     super.init()
     
-    Transitioning.shared = self
+    holder = self
   }
   
 }
@@ -139,8 +139,6 @@ private extension Transitioning {
   
   @objc func quit(_ sender: UISwipeGestureRecognizer) {
     
-    guard sender.direction == .down else { return }
-    
     Presenter.back()
   }
   
@@ -166,7 +164,12 @@ private extension Transitioning {
     
     if isQuitGestureEnable == true {
       
-      quitGesture.direction = .down
+      switch dismissAnimation {
+      case .leftToRight: quitGesture.direction = .right
+      case .topToBottom: quitGesture.direction = .down
+      case .rightToLeft: quitGesture.direction = .left
+      case .bottomToTop: quitGesture.direction = .up
+      }
       toViewController.view.addGestureRecognizer(quitGesture)
     }
     
@@ -207,7 +210,7 @@ private extension Transitioning {
     }, completion: { (_) in
       
       transitionContext.completeTransition(true)
-      Transitioning.shared = nil
+      self.holder = nil
     })
   }
   
