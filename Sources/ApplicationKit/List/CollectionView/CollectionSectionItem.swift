@@ -25,7 +25,7 @@ public struct CollectionSectionItem {
   public weak var delegate: AnyObject?
   
   /// 动态SectionView
-  internal var reuseItem: ReuseItem
+  public var reuseItem: ReuseItem
     
   /// Section视图的大小
   public var size: CGSize

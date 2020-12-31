@@ -28,25 +28,25 @@ public struct TableCellItem/*<DataSource>*/ {
   public weak var delegate: AnyObject?
   
   /// 动态Cell
-  internal var reuseItem: ReuseItem?
+  public var reuseItem: ReuseItem?
   /// 静态Cell
-  internal var staticCell: UITableViewCell?
+  public var staticCell: UITableViewCell?
   
   // MARK: CellStyle
   /// UITableViewCellAccessoryType
-  internal var accessoryType: UITableViewCell.AccessoryType
+  public var accessoryType: UITableViewCell.AccessoryType
   /// Cell的分割线间距
-  internal var seperatorInsets: UIEdgeInsets?
+  public var seperatorInsets: UIEdgeInsets?
   /// Cell的高度
-  internal var height: CGFloat
+  public var height: CGFloat
   
   // MARK: CellAction
   /// Cell选中操作
-  internal var selectedHandle: (() -> Void)?
+  public var selectedHandle: (() -> Void)?
   /// Cell反选操作
-  internal var deselectedHandle: (() -> Void)?
+  public var deselectedHandle: (() -> Void)?
   /// 删除操作
-  internal var deleteHandle: (() -> Void)?
+  public var deleteHandle: (() -> Void)?
   
   /// 创建Cell
   ///
