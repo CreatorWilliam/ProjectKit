@@ -58,6 +58,7 @@ extension ImagePickerAlbumViewController {
     }
     albumViewController.handle = handle
     let navigationController = UINavigationController(rootViewController: albumViewController)
+    navigationController.modalPresentationStyle = .fullScreen
     UIApplication.shared.keyWindow?.rootViewController?.present(navigationController, animated: true)
   }
   
@@ -122,7 +123,7 @@ extension ImagePickerAlbumViewController: PHPhotoLibraryChangeObserver {
   /// 系统相册改变
   public func photoLibraryDidChange(_ changeInstance: PHChange) {
     
-    DispatchQueue.main.sync {
+    DispatchQueue.main.async {
       
 //      if let changeDetails = changeInstance.changeDetails(for: self.allPhotos) {
 //

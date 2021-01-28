@@ -221,6 +221,7 @@ private extension ImagePickerAssetViewController {
     self.navigationView.setup(title: self.album?.title)
     self.navigationView.addRight(title: "取消", target: self, action: #selector(clickCancel))
     self.navigationView.showBack()
+    self.view.backgroundColor = .white
     
     let spaceing: CGFloat = 3
     let count: CGFloat = 3
@@ -332,7 +333,7 @@ private extension ImagePickerAssetViewController {
   
   func showLargeView(_ item: AssetItem) {
     
-    self.imageManager.requestImage(for: item.asset, targetSize: CGSize(width: 150, height: 150), contentMode: .aspectFill, options: nil, resultHandler: { [weak self] (image, _) in
+    self.imageManager.requestImage(for: item.asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: nil, resultHandler: { [weak self] (image, _) in
       
       self?.previewView.update(with: image)
       UIView.animate(withDuration: 0.5, animations: {
@@ -359,7 +360,7 @@ private extension ImagePickerAssetViewController {
     self.selectedAssets.forEach({ (item) in
       
       assets.append(item.asset)
-      self.imageManager.requestImage(for: item.asset, targetSize: UIScreen.main.bounds.size, contentMode: PHImageContentMode.default, options: nil, resultHandler: { (image, _) in
+      self.imageManager.requestImage(for: item.asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: nil, resultHandler: { (image, _) in
         
         if let image = image {
           
@@ -368,8 +369,10 @@ private extension ImagePickerAssetViewController {
       })
     })
     
-    self.completedHandle?(assets, images)
-    self.dismiss(animated: true)
+    self.dismiss(animated: true, completion: {
+      
+      self.completedHandle?(assets, images)
+    })
   }
   
 }

@@ -21,6 +21,7 @@ public class ImagePicker: NSObject {
     super.init()
     
     self.imagePicker.delegate = self
+    imagePicker.modalPresentationStyle = .fullScreen
   }
   
 }
@@ -107,13 +108,6 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
   
   public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
     
-    defer {
-      
-      // 因为是全局的，用完一次就可以清除回调
-      picker.dismiss(animated: true)
-      
-    }
-    
     // 获取选择的图片
     guard let originImage = info[.originalImage] as? UIImage else { return }
     
@@ -122,8 +116,11 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
       
       DispatchQueue.main.async {
         
-        self.completeHandle?([], [originImage])
-        self.completeHandle = nil
+        picker.dismiss(animated: true, completion: {
+          
+          self.completeHandle?([], [originImage])
+          self.completeHandle = nil
+        })
       }
       return
     }
@@ -133,8 +130,11 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
       
       DispatchQueue.main.async {
         
-        self.completeHandle?([], [image])
-        self.completeHandle = nil
+        picker.dismiss(animated: true, completion: {
+          
+          self.completeHandle?([], [image])
+          self.completeHandle = nil
+        })
       }
       return
     }
