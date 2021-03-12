@@ -34,4 +34,15 @@ public extension QRCodeTool {
     return UIImage(ciImage: outputImage)
   }
   
+  static func string(for image: UIImage) -> String? {
+    
+    guard let data = image.pngData() else { return nil }
+    guard let ciImage = CIImage(data: data) else { return nil }
+    
+    let context = CIContext(options: [.useSoftwareRenderer: true])
+    let detector = CIDetector(ofType: CIDetectorTypeQRCode, context: context, options: [CIDetectorAccuracy: CIDetectorAccuracyHigh])
+    let result = detector?.features(in: ciImage)
+    let feature = result?.first as? CIQRCodeFeature
+    return feature?.messageString
+  }
 }
