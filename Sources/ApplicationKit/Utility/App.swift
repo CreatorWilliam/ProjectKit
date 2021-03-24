@@ -50,7 +50,6 @@ public extension App {
       json = json["results"]
       
       // 调试
-      DebugLog(json)
       //let version: String? = json["version"]
       //let url: String? = json["trackViewUrl"]
       DispatchQueue.main.async(execute: {

@@ -14,7 +14,8 @@ let package = Package(
                 "ComponentKit",
                 "LayoutKit",
                 "JSONKit",
-                "NetworkKit"]),
+                "NetworkKit",
+                ]),
   ],
   dependencies: [
     // Dependencies declare other packages that this package depends on.

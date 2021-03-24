@@ -308,12 +308,14 @@ extension PlayerView {
     case #keyPath(AVPlayerItem.playbackBufferEmpty):
       
       // TODO: 缓冲不足，显示Loading
-      DebugLog("AVPlayerItem's playbackBufferEmpty is changed: \(item.isPlaybackBufferEmpty)")
+      //DebugLog("AVPlayerItem's playbackBufferEmpty is changed: \(item.isPlaybackBufferEmpty)")
+      break
       
     case #keyPath(AVPlayerItem.playbackLikelyToKeepUp):
       
       // TODO: 缓冲足够，隐藏Loading
-      DebugLog("AVPlayerItem's playbackLikelyToKeepUp is changed: \(item.isPlaybackLikelyToKeepUp)")
+      //DebugLog("AVPlayerItem's playbackLikelyToKeepUp is changed: \(item.isPlaybackLikelyToKeepUp)")
+      break
       
     default:
       
@@ -327,7 +329,7 @@ private extension PlayerView {
   
   func playerStatusDidChanged(_ item: AVPlayerItem) {
     
-    DebugLog("AVPlayerItem's status is changed: \(item.status)")
+    //DebugLog("AVPlayerItem's status is changed: \(item.status)")
     
     if item.status == .failed {
       
@@ -350,7 +352,7 @@ private extension PlayerView {
     let startSeconds = timeRange.start.seconds //开始的时间
     let durationSecound = timeRange.duration.seconds//表示已经缓冲的时间
     let bufferDuration = startSeconds + durationSecound // 计算缓冲总时间
-    DebugLog("AVPlayerItem's loadedTimeRanges is changed, current: \(bufferDuration)s - total: \(item.duration.seconds)s")
+    //DebugLog("AVPlayerItem's loadedTimeRanges is changed, current: \(bufferDuration)s - total: \(item.duration.seconds)s")
     guard item.duration.seconds.isNaN == false else { return }
     controlView.playerView(self, updateProgressWithBufferingTime: bufferDuration, totalTime: item.duration.seconds)
   }

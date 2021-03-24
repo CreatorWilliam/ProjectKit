@@ -52,23 +52,32 @@ public extension ImageTool {
   ///   - imageSize: 图片的大小
   ///   - gradientColors: 渐变色数组
   ///   - locations: 渐变线性百分比数组
+  ///   - startPoint: 渐变起始位置 x: 0 ~ 1, y: 0 ~ 1
+  ///   - endPoint: 渐变结束位置 x: 0 ~ 1, y: 0 ~ 1
   /// - Returns: 可选的UIImage对象
   static func gradient(with imageSize: CGSize,
                        gradientColors: [UIColor],
-                       locations: [CGFloat] = [0, 1]) -> UIImage? {
+                       locations: [CGFloat] = [0, 1],
+                       startPoint: CGPoint = CGPoint(x: 0, y: 0.5),
+                       endPoint: CGPoint = CGPoint(x: 0.5, y: 1)) -> UIImage? {
     
     UIGraphicsBeginImageContextWithOptions(imageSize, true, 0)
     
     guard let context = UIGraphicsGetCurrentContext() else { return nil }
     context.saveGState()
     let colorSpace = gradientColors.last?.cgColor.colorSpace
-    guard let gradientRef = CGGradient(colorsSpace: colorSpace, colors: gradientColors.compactMap({ $0.cgColor }) as CFArray, locations: locations) else { return nil }
+    guard let gradientRef = CGGradient(colorsSpace: colorSpace,
+                                       colors: gradientColors
+                                        .compactMap({ $0.cgColor }) as CFArray,
+                                       locations: locations)
+    else { return nil }
     
-    ///水平方向渐变
-    let startPoint = CGPoint(x: 0, y: imageSize.height / 2)
-    let endPoint = CGPoint(x: imageSize.width, y: imageSize.height / 2)
+    let start = CGPoint(x: imageSize.width * startPoint.x,
+                        y: imageSize.height * startPoint.y)
+    let end = CGPoint(x: imageSize.width * endPoint.x,
+                      y: imageSize.height * endPoint.y)
     
-    context.drawLinearGradient(gradientRef, start: startPoint, end: endPoint, options: [.drawsBeforeStartLocation, .drawsAfterEndLocation])
+    context.drawLinearGradient(gradientRef, start: start, end: end, options: [.drawsBeforeStartLocation, .drawsAfterEndLocation])
     
     let image = UIGraphicsGetImageFromCurrentImageContext()
     
