@@ -9,7 +9,7 @@
 import Foundation
 
 /// 遵循该协议，PageView翻页的时候，调用该方法，实现PageView与SegmentView同步
-public protocol Pagable: class {
+public protocol Pagable: AnyObject {
   
   /// 翻页
   ///

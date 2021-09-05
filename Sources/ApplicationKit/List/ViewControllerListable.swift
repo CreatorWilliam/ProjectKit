@@ -9,7 +9,7 @@
 import UIKit
 
 /// 列表视图控制器协议
-public protocol ViewControllerListable: class {
+public protocol ViewControllerListable: AnyObject {
   
   //associatedtype Item
   /// 列表控制器，列表视图所在的视图控制器，用于显示一些HUD

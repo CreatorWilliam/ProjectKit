@@ -196,35 +196,18 @@ private extension TextModel {
   
   mutating func update() {
     
-    let font = self.font
-    let fontSpace = self.fontSpace
-    var lineSpace = self.lineSpace
+    let style = NSMutableParagraphStyle()
+    style.lineBreakMode = .byCharWrapping
+    style.lineSpacing = lineSpace
     
-    let attributedText = NSMutableAttributedString(string: self.text)
+    attributedText = NSMutableAttributedString(string: text, attributes: [.paragraphStyle: style,
+                                                                              .font: font,
+                                                                              .kern: fontSpace,
+                                                                              .foregroundColor: textColor])
     
-    attributedText.addAttribute(.font, value: font, range: NSMakeRange(0, attributedText.length))
-    
-    attributedText.addAttribute(.foregroundColor , value: self.textColor , range: NSMakeRange(0, attributedText.length))
-    
-    attributedText.addAttribute(.kern, value: fontSpace, range: NSMakeRange(0, attributedText.length))
-    
-    // 添加换行模式
-    var lineBreakModel: CTLineBreakMode = .byCharWrapping
-    let lineBreakStyle = CTParagraphStyleSetting(spec: .lineBreakMode , valueSize: MemoryLayout<CTLineBreakMode>.size, value: &lineBreakModel)
-    
-    // 行距
-    let lineSpaceStyle = CTParagraphStyleSetting(spec: CTParagraphStyleSpecifier.lineSpacingAdjustment, valueSize: 4, value: &lineSpace)
-    //let lineSpaceStyle = CTParagraphStyleSetting(spec: .lineSpacingAdjustment, valueSize: sizeof(CGFloat()), value: &lineSpace)
-    
-    let settings = [lineBreakStyle,lineSpaceStyle]
-    let style = CTParagraphStyleCreate(settings, settings.count )
-    attributedText.addAttributes([NSAttributedString.Key(rawValue: kCTParagraphStyleAttributeName as String) : style], range: NSMakeRange(0, attributedText.length))
-    
-    self.attributedText = attributedText
-    
-    self.runsURL()
-    self.runsNumber()
-    self.runsSomeone()
+    runsURL()
+    runsNumber()
+    runsSomeone()
   }
   
 }

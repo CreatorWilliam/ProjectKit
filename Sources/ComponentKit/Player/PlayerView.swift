@@ -35,8 +35,8 @@ public class PlayerView: UIView {
       NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: nil)
       playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.status))
       playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.loadedTimeRanges))
-      playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.playbackBufferEmpty))
-      playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.playbackLikelyToKeepUp))
+      playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty))
+      playerItem?.removeObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackLikelyToKeepUp))
     }
     
     didSet {
@@ -46,9 +46,9 @@ public class PlayerView: UIView {
       playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.status), options: .new, context: nil)
       playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.loadedTimeRanges), options: .new, context: nil)
       // 缓冲区空了，需要等待数据
-      playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.playbackBufferEmpty), options: .new, context: nil)
+      playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackBufferEmpty), options: .new, context: nil)
       // 缓冲区有足够数据可以播放了
-      playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.playbackLikelyToKeepUp), options: .new, context: nil)
+      playerItem?.addObserver(self, forKeyPath: #keyPath(AVPlayerItem.isPlaybackLikelyToKeepUp), options: .new, context: nil)
     }
   }
   private let player = AVPlayer()
@@ -305,13 +305,13 @@ extension PlayerView {
       
       playerBufferDidChanged(item)
       
-    case #keyPath(AVPlayerItem.playbackBufferEmpty):
+    case #keyPath(AVPlayerItem.isPlaybackBufferEmpty):
       
       // TODO: 缓冲不足，显示Loading
       //DebugLog("AVPlayerItem's playbackBufferEmpty is changed: \(item.isPlaybackBufferEmpty)")
       break
       
-    case #keyPath(AVPlayerItem.playbackLikelyToKeepUp):
+    case #keyPath(AVPlayerItem.isPlaybackLikelyToKeepUp):
       
       // TODO: 缓冲足够，隐藏Loading
       //DebugLog("AVPlayerItem's playbackLikelyToKeepUp is changed: \(item.isPlaybackLikelyToKeepUp)")

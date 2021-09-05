@@ -9,7 +9,7 @@
 import ApplicationKit
 import UIKit
 
-public protocol CountingLabelDelegate: class {
+public protocol CountingLabelDelegate: AnyObject {
   
   func countingLabelDidEndCountingAnimation(_ label: CountingLabel)
   

@@ -8,7 +8,7 @@
 
 import UIKit
 
-public protocol CodeInputViewDelegate: class {
+public protocol CodeInputViewDelegate: AnyObject {
     
     func codeInputView(_ codeInputView: CodeInputView, didComplete code: String)
     

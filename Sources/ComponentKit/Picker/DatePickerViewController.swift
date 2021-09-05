@@ -192,7 +192,7 @@ private extension DatePickerViewController {
     
     cancelButton.setTitle("取消", for: .normal)
     cancelButton.setTitleColor(UIColor(0x383e5a), for: .normal)
-    cancelButton.titleLabel?.font = Font.system(14)
+    cancelButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
     cancelButton.addTarget(self, action: #selector(clickCancel(_:)), for: .touchUpInside)
     topToolView.addSubview(cancelButton)
     cancelButton.layout.add { (make) in
@@ -202,7 +202,7 @@ private extension DatePickerViewController {
     
     confirmButton.setTitle("确定", for: .normal)
     confirmButton.setTitleColor(UIColor(0x1c8bfc), for: .normal)
-    confirmButton.titleLabel?.font = Font.system(14)
+    confirmButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
     confirmButton.addTarget(self, action: #selector(clickConfirm(_:)), for: .touchUpInside)
     topToolView.addSubview(confirmButton)
     confirmButton.layout.add { (make) in
@@ -211,7 +211,7 @@ private extension DatePickerViewController {
     }
     
     titleLabel.text = "请选择日期"
-    titleLabel.font = Font.system(12)
+    titleLabel.font = .preferredFont(forTextStyle: .caption1)
     titleLabel.textAlignment = .center
     titleLabel.textColor = UIColor(0xbbc3d1)
     topToolView.addSubview(titleLabel)
@@ -415,19 +415,17 @@ extension DatePickerViewController: UIPickerViewDelegate {
     
     guard let date = date(from: dateComponents) else { return nil }
     
-    var textFont: UIFont = Font.pingFangSCSemibold(9)
+    let textFont: UIFont = .preferredFont(forTextStyle: .caption1)
     var textColor: UIColor = UIColor(0x333333)
     
     if let minimumDate = minimumDate, date < minimumDate {
       
       textColor = UIColor(0xaaaaaa)
-      textFont = Font.pingFangSCLight(9)
     }
     
     if let maximumDate = maximumDate, date > maximumDate {
       
       textColor = UIColor(0xaaaaaa)
-      textFont = Font.pingFangSCLight(9)
     }
     
     return NSAttributedString(string: text, attributes: [.font: textFont, .foregroundColor: textColor])

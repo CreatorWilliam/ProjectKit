@@ -135,7 +135,7 @@ private extension SegmentViewCell {
     self.badgeView.isUserInteractionEnabled = false
     self.badgeView.setTitle("", for: .normal)
     self.badgeView.layer.backgroundColor = UIColor(0xff4f4f).cgColor
-    self.badgeView.titleLabel?.font = Font.system(10)
+    self.badgeView.titleLabel?.font = .preferredFont(forTextStyle: .caption1)
     self.badgeView.setTitleColor(.white, for: .normal)
     self.badgeView.contentEdgeInsets = UIEdgeInsets(top: 2, left: 2, bottom: 2, right: 2)
     self.titleButton.addSubview(self.badgeView)

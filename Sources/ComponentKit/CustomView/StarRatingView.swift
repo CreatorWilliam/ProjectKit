@@ -8,7 +8,7 @@
 
 import UIKit
 
-public protocol StarRatingViewDelegate: class {
+public protocol StarRatingViewDelegate: AnyObject {
   
   func scoreDidChanded(_ sender: Float)
 }

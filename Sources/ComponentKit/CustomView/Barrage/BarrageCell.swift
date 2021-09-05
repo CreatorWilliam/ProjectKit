@@ -47,7 +47,7 @@ private extension BarrageCell {
   
   func setupUI() {
     
-    self.contentLabel.font = Font.system(16)
+    self.contentLabel.font = .preferredFont(forTextStyle: .body)
     self.contentLabel.textColor = .white
   }
   

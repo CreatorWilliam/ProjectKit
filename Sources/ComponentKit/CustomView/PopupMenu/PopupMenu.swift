@@ -9,7 +9,7 @@
 import ApplicationKit
 import UIKit
 
-public protocol PopupMenuDelegate: class {
+public protocol PopupMenuDelegate: AnyObject {
   
   func popupMenu(_ popupMenu: PopupMenu, didSelectAt index: Int)
   

@@ -10,7 +10,7 @@ import ApplicationKit
 import Photos
 import UIKit
 
-protocol ImageAssetCollectionViewCellDelegate: class {
+protocol ImageAssetCollectionViewCellDelegate: AnyObject {
   
   func select(_ asset: AssetItem)
   

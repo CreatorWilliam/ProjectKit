@@ -21,7 +21,7 @@ public protocol SelectionCellUpdatable: UITableViewCell {
   
 }
 
-public protocol SelectionViewControllerDelegate: class {
+public protocol SelectionViewControllerDelegate: AnyObject {
   
   /// 是否显示下一页
   func selectionViewController(_ viewController: SelectionViewController,

@@ -9,7 +9,7 @@
 import UIKit
 import ImageKit
 
-public protocol CircleScrollViewDelegate: class {
+public protocol CircleScrollViewDelegate: AnyObject {
   
   func circleScrollView(_ view: CircleScrollView, didScrollTo index: Int)
   func circleScrollView(_ view: CircleScrollView, didSelectAt index: Int)

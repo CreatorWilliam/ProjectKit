@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
   name: "ProjectKit",
+  platforms: [.iOS(.v9)],
   products: [
     // Products define the executables and libraries produced by a package, and make them visible to other packages.
     .library(
@@ -12,13 +13,14 @@ let package = Package(
       type: .static,
       targets: ["ApplicationKit",
                 "ComponentKit",
-                "LayoutKit",
-                "JSONKit",
-                "NetworkKit",
-                ]),
+      ]),
   ],
   dependencies: [
     // Dependencies declare other packages that this package depends on.
+    .package(url: "https://github.com/CreatorWilliam/ImageKit.git", .branch("master")),
+    .package(url: "https://github.com/CreatorWilliam/LayoutKit.git", .branch("master")),
+    .package(url: "https://github.com/CreatorWilliam/NetworkKit.git", .branch("master")),
+    .package(url: "https://github.com/CreatorWilliam/JSONKit.git", .branch("master")),
   ],
   targets: [
     // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -30,12 +32,5 @@ let package = Package(
     .target(name: "ComponentKit",
             dependencies: ["ApplicationKit",
                            "ImageKit"]),
-    .target(name: "LayoutKit"),
-    .target(name: "JSONKit"),
-    .target(name: "NetworkKit"),
-    .target(name: "ImageKit"),
-    .testTarget(
-      name: "ApplicationKitTests",
-      dependencies: ["ApplicationKit"]),
   ]
 )

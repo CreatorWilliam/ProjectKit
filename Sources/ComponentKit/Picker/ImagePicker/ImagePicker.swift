@@ -126,7 +126,7 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
     }
     
     /// 默认是重绘后的图片
-    if let image = ImageTool.draw(originImage) {
+    if let image = draw(originImage) {
       
       DispatchQueue.main.async {
         
@@ -148,6 +148,36 @@ extension ImagePicker: UIImagePickerControllerDelegate, UINavigationControllerDe
     // 因为是全局的，用完一次就可以清除回调
     self.completeHandle = nil
     
+  }
+  
+}
+
+private extension ImagePicker {
+  
+  func draw(_ image: UIImage) -> UIImage? {
+    
+    let size: CGSize = UIScreen.main.bounds.size
+    var drawedSize = size
+    let imageSize = image.size
+    
+    if drawedSize.equalTo(CGSize.zero) {
+      
+      drawedSize = UIScreen.main.bounds.size
+    }
+    let scale: CGFloat = drawedSize.width / imageSize.width
+      
+    drawedSize = CGSize(width: Int(imageSize.width * scale),
+                        height: Int(imageSize.height * scale))
+    
+    let tailoredRect = CGRect(origin: CGPoint.zero,
+                              size: drawedSize)
+    
+    UIGraphicsBeginImageContextWithOptions(drawedSize, true, 0)
+    image.draw(in: tailoredRect)
+    let tailoredImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    
+    return tailoredImage
   }
   
 }

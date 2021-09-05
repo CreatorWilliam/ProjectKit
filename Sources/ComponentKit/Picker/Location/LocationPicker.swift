@@ -213,7 +213,7 @@ private extension LocationPicker {
     // Title
     self.titleLabel.text = "当前城市"
     self.titleLabel.textColor = UIColor(0x33333)
-    self.titleLabel.font = Font.system(15)
+    self.titleLabel.font = .preferredFont(forTextStyle: .title3)
     self.titleLabel.textAlignment = .center
     self.titleLabel.backgroundColor = .white
     self.contentView.addSubview(self.titleLabel)

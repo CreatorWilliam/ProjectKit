@@ -9,7 +9,7 @@
 import UIKit
 
 
-public protocol ESExtensionsProvider: class {
+public protocol ESExtensionsProvider: AnyObject {
   associatedtype CompatibleType
   var es: CompatibleType { get }
 }
