@@ -10,22 +10,22 @@ import Photos
 
 struct AlbumItem {
  
-  let assets: [AssetItem]
-  let result: PHFetchResult<PHAsset>
   let title: String
   let count: Int
+  let assets: [PHAsset]
+  let result: PHFetchResult<PHAsset>
   
   init(_ assets: PHFetchResult<PHAsset>, _ title: String?) {
     
     self.result = assets
-    var items: [AssetItem] = []
+    var items: [PHAsset] = []
     for index in 0 ..< assets.count {
       
-      items.append(AssetItem(assets.object(at: index)))
+      items.append(assets.object(at: index))
     }
     self.assets = items
     self.title = title ?? ""
-    self.count = self.assets.count
+    self.count = result.count
   }
   
 }

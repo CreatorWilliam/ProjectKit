@@ -34,7 +34,7 @@ public struct TableCellItem/*<DataSource>*/ {
   
   // MARK: CellStyle
   /// UITableViewCellAccessoryType
-  public var accessoryType: UITableViewCell.AccessoryType
+  public var accessoryType: UITableViewCell.AccessoryType?
   /// Cell的分割线间距
   public var seperatorInsets: UIEdgeInsets?
   /// Cell的高度
@@ -65,7 +65,7 @@ public struct TableCellItem/*<DataSource>*/ {
               data: Any? = nil,
               accessoryData: Any? = nil,
               delegate: AnyObject? = nil,
-              accessoryType: UITableViewCell.AccessoryType = .none,
+              accessoryType: UITableViewCell.AccessoryType? = nil,
               seperatorInsets insets: UIEdgeInsets? = nil,
               height: CGFloat = UITableView.automaticDimension,
               selected selectedHandle: (() -> Void)? = nil,

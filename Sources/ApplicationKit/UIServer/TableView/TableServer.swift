@@ -394,7 +394,8 @@ extension TableServer: UITableViewDataSource {
     // 默认的Cell
     else { cell = UITableViewCell(style: .default, reuseIdentifier: nil) }
     
-    cell.accessoryType = item.accessoryType
+    if let type = item.accessoryType { cell.accessoryType = type }
+    
     if let cell = cell as? TableCellItemUpdatable { cell.update(with: item) }
     
     return cell
