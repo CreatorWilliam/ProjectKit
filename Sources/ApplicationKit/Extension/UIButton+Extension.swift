@@ -23,7 +23,8 @@ public extension UIButton {
     case bottom
   }
   
-  func setImage(position: ButtonImagePosition, with margin: CGFloat) {
+  func setImage(position: ButtonImagePosition,
+                with margin: CGFloat) {
     
     let imageSize = self.imageView?.image?.size ?? CGSize.zero
     
@@ -72,6 +73,32 @@ public extension UIButton {
       
     }
     
+  }
+  
+}
+
+// MARK: - Closure
+public extension UIButton {
+  
+  private struct ExtensionKey {
+    
+    static var closure: Void?
+  }
+  
+  typealias Action = () -> Void
+  var touchUpInside: Action? {
+    set {
+      
+      objc_setAssociatedObject(self, &ExtensionKey.closure, newValue, .OBJC_ASSOCIATION_RETAIN)
+      removeTarget(nil, action: #selector(onTouchUpInside(_:)), for: .touchUpInside)
+      addTarget(self, action: #selector(onTouchUpInside(_:)), for: .touchUpInside)
+    }
+    get { objc_getAssociatedObject(self, &ExtensionKey.closure) as? Action }
+  }
+  
+  @objc func onTouchUpInside(_ sender: UIButton) {
+    
+    touchUpInside?()
   }
   
 }

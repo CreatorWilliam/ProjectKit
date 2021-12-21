@@ -56,12 +56,23 @@ public extension Project {
     NavigationView.defaultBackgroundImage = backgroundImage
     NavigationView.defaultBackImage = backImageName
     if let title = backTitle { NavigationView.defaultBackTitle = title }
+    
     // NavigationBar
     UINavigationBar.appearance().tintColor = titleColor
     UINavigationBar.appearance().barTintColor = backgroundColor
     UINavigationBar.appearance().setBackgroundImage(backgroundImage, for: .default)
     UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: titleColor, .font: titleFont]
     UINavigationBar.appearance().shadowImage = UIImage()
+    
+    if #available(iOS 13.0, *) {
+      
+      let appearance = UINavigationBarAppearance()
+      appearance.backgroundColor = backgroundColor
+      appearance.backgroundImage = backgroundImage
+      appearance.titleTextAttributes = [.foregroundColor: titleColor, .font: titleFont]
+      appearance.shadowImage = UIImage()
+    }
+    
   }
   
   /// 配置网络请求的主机地址，同时根据网络可达性，发出相应的通知：NetworkKit.Reachability.changedNotification
@@ -88,8 +99,8 @@ public extension Project {
   ///   - viewController: 要添加的控制器
   ///   - title: 标签名称
   ///   - normalImage: 标签图片（未选中）
-  ///   - selectedImage: 标签图片（未选中）
-  ///   - normalColor: 标签名称颜色（选中）
+  ///   - selectedImage: 标签图片（选中）
+  ///   - normalColor: 标签名称颜色（未选中）
   ///   - selectedColor: 标签名称颜色（选中）
   ///   - isEmbeddedNavigation: 是否嵌套一个导航栏后再加入UITabBarController
   ///   - tabBarController: 指定的UITabBarController
@@ -102,7 +113,11 @@ public extension Project {
                      isEmbeddedNavigation: Bool = true,
                      to tabBarController: UITabBarController) -> Void {
     
+    
     tabBarController.tabBar.isTranslucent = false
+    
+    // 用于解决标签栏文字，会变为系统蓝色的问题
+    tabBarController.tabBar.tintColor = selectedColor
     
     viewController.navigationItem.title = title
     viewController.tabBarItem.title = title

@@ -10,20 +10,19 @@ import UIKit
 
 public class CircleProgressView: UIView {
   
+    /// 进度
+  public var progress: CGFloat = 0 { didSet { setNeedsDisplay() } }
   /// 进度条颜色
-  private var progressColor: UIColor = UIColor.blue
+  public var progressColor: UIColor = .blue
   /// 进度条背景色
-  private var progressBackgroundColor: UIColor = UIColor.lightGray
-  /// 进度
-  private var progress: CGFloat = 0
+  public var progressBackgroundColor: UIColor = .lightGray
   /// 进度条宽度
-  private var progressWidth: CGFloat = 1
+  public var progressWidth: CGFloat = 1
   
   override init(frame: CGRect) {
     super.init(frame: frame)
     
-    self.setupView()
-    self.setupLayout()
+    setupUI()
   }
   
   required public init?(coder aDecoder: NSCoder) {
@@ -35,9 +34,8 @@ public class CircleProgressView: UIView {
   override public func draw(_ rect: CGRect) {
     // Drawing code
     
-    self.drawProgressBackground(in: rect)
-    self.drawProgress(in: rect)
-    
+    drawProgressBackground(in: rect)
+    drawProgress(in: rect)
   }
   
 }
@@ -45,32 +43,14 @@ public class CircleProgressView: UIView {
 // MARK: - Public
 public extension CircleProgressView {
   
-  func updateAppearanceProgress(color: UIColor = .blue,
-                                backgroundColor: UIColor = .lightGray,
-                                width: CGFloat = 1) {
-    
-    self.progressColor = color
-    self.progressBackgroundColor = backgroundColor
-    self.progressWidth = width
-  }
-  
-  func updateProgress(_ progress: CGFloat) {
-    
-    self.progress = progress
-    self.setNeedsDisplay()
-  }
 }
 
 // MARK: - Setup
 private extension CircleProgressView {
   
-  func setupView() {
+  func setupUI() {
     
-    self.backgroundColor = .clear
-  }
-  
-  func setupLayout() {
-    
+    backgroundColor = .clear
   }
   
 }
@@ -89,7 +69,7 @@ private extension CircleProgressView {
     backgroundPath.addArc(withCenter: center, radius: radius, startAngle: 0, endAngle: CGFloat.pi, clockwise: false)
     backgroundPath.lineWidth = 3
     backgroundPath.lineCapStyle = .square
-    self.progressBackgroundColor.setStroke()
+    progressBackgroundColor.setStroke()
     backgroundPath.stroke()
   }
   
@@ -115,21 +95,8 @@ private extension CircleProgressView {
     }
     progressPath.lineWidth = 3
     progressPath.lineCapStyle = .square
-    self.progressColor.setStroke()
+    progressColor.setStroke()
     progressPath.stroke()
   }
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

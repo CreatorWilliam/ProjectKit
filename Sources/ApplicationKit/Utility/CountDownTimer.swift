@@ -26,7 +26,7 @@ public class CountDownTimer {
   
   deinit {
     
-    self.stop()    
+    self.stop()
   }
   
 }
