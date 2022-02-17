@@ -118,6 +118,11 @@ public extension Project {
     
     // 用于解决标签栏文字，会变为系统蓝色的问题
     tabBarController.tabBar.tintColor = selectedColor
+    if #available(iOS 10.0, *) {
+      tabBarController.tabBar.unselectedItemTintColor = normalColor
+    } else {
+        // Fallback on earlier versions
+    }
     
     viewController.navigationItem.title = title
     viewController.tabBarItem.title = title
