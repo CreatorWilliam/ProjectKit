@@ -62,7 +62,7 @@ public extension ImageTool {
                        startPoint: CGPoint = CGPoint(x: 0, y: 0.5),
                        endPoint: CGPoint = CGPoint(x: 0.5, y: 1)) -> UIImage? {
     
-    UIGraphicsBeginImageContextWithOptions(imageSize, true, 0)
+    UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
     
     guard let context = UIGraphicsGetCurrentContext() else { return nil }
     context.saveGState()
@@ -97,7 +97,7 @@ public extension ImageTool {
     
     let rect = CGRect(x: 0, y: 0, width: rectSize.width, height: rectSize.height)
     
-    UIGraphicsBeginImageContextWithOptions(rect.size, true, 0)
+    UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
     
     let context = UIGraphicsGetCurrentContext()
     
@@ -125,7 +125,7 @@ public extension ImageTool {
     
     let rect = CGRect(x: 0, y: 0, width: radius * 2, height: radius * 2)
     
-    UIGraphicsBeginImageContextWithOptions(rect.size, true, 0)
+    UIGraphicsBeginImageContextWithOptions(rect.size, false, 0)
     let context = UIGraphicsGetCurrentContext()
     context?.addEllipse(in: rect)
     context?.setFillColor(color.cgColor)
@@ -247,7 +247,7 @@ public extension ImageTool {
     let tailoredRect = CGRect(origin: CGPoint.zero,
                               size: drawedSize)
     
-    UIGraphicsBeginImageContextWithOptions(drawedSize, true, 0)
+    UIGraphicsBeginImageContextWithOptions(drawedSize, false, 0)
     image.draw(in: tailoredRect)
     let tailoredImage = UIGraphicsGetImageFromCurrentImageContext()
     UIGraphicsEndImageContext()
